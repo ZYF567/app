@@ -9,12 +9,14 @@ from pyecharts.charts import WordCloud, Bar, Pie, Line, HeatMap, Scatter
 from pyecharts import options as opts
 from pyecharts.globals import ThemeType
 
+# 初始化 Pyecharts
+pyecharts.options.init_notebook_mode()
+
 # 设置 pyecharts 的全局配置项
-pyecharts.options.GLOBAL_INIT_OPTIONS = pyecharts.options.InitOpts(
+opts.InitOpts(
     theme=ThemeType.LIGHT,  # 设置主题
     font_family='SimHei'  # 设置字体为黑体
 )
-
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
