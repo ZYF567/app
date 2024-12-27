@@ -4,16 +4,17 @@ import requests
 from bs4 import BeautifulSoup
 import jieba
 from collections import Counter
-import pyecharts
 from pyecharts.charts import WordCloud, Bar, Pie, Line, HeatMap, Scatter
 from pyecharts import options as opts
 from pyecharts.globals import ThemeType
+import streamlit_echarts  # 导入 streamlit_echarts 库
 
 # 设置 pyecharts 的全局配置项
 opts.InitOpts(
     theme=ThemeType.LIGHT,  # 设置主题
     font_family='SimHei'  # 设置字体为黑体
 )
+
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -63,7 +64,7 @@ def process_text_for_frequency(text):
 def create_wordcloud(words, frequencies):
     wordcloud = WordCloud()
     wordcloud.add("", [list(z) for z in zip(words, frequencies)], word_size_range=[20, 100])
-    wordcloud.render_notebook()
+    return wordcloud
 
 # 创建柱状图
 def create_bar_chart(data):
@@ -71,7 +72,7 @@ def create_bar_chart(data):
     bar.add_xaxis(data['词语'].tolist())
     bar.add_yaxis("频率", data['频率'].tolist())
     bar.set_global_opts(title_opts=opts.TitleOpts(title="词频柱状图"))
-    bar.render_notebook()
+    return bar
 
 # 创建饼图
 def create_pie_chart(data):
@@ -79,11 +80,7 @@ def create_pie_chart(data):
     pie.add("", [list(z) for z in zip(data['词语'].tolist(), data['频率'].tolist())])
     pie.set_global_opts(title_opts=opts.TitleOpts(title="词频饼图"))
     pie.set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
-    st_pie = pyecharts.charts.Pie(init_opts=opts.InitOpts(width="1000px", height="600px"))
-    st_pie.add("", [list(z) for z in zip(data['词语'].tolist(), data['频率'].tolist())])
-    st_pie.set_global_opts(title_opts=opts.TitleOpts(title="词频饼图"))
-    st_pie.set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
-    st_pie.render_notebook()
+    return pie
 
 # 创建折线图
 def create_line_chart(data):
@@ -91,7 +88,7 @@ def create_line_chart(data):
     line.add_xaxis(data['词语'].tolist())
     line.add_yaxis("频率", data['频率'].tolist())
     line.set_global_opts(title_opts=opts.TitleOpts(title="词频折线图"))
-    line.render_notebook()
+    return line
 
 # 创建热力图
 def create_heatmap(data):
@@ -100,7 +97,7 @@ def create_heatmap(data):
     heatmap.add_xaxis(data.index.tolist())
     heatmap.add_yaxis("频率", data.columns.tolist(), data.values.tolist())
     heatmap.set_global_opts(title_opts=opts.TitleOpts(title="热力图"))
-    heatmap.render_notebook()
+    return heatmap
 
 # 创建散点图
 def create_scatter_plot(data):
@@ -108,7 +105,7 @@ def create_scatter_plot(data):
     scatter.add_xaxis(data['词语'].tolist())
     scatter.add_yaxis("频率", data['频率'].tolist())
     scatter.set_global_opts(title_opts=opts.TitleOpts(title="词频散点图"))
-    scatter.render_notebook()
+    return scatter
 
 # 主函数
 def main():
@@ -160,22 +157,28 @@ def main():
 
             if chart_type == "词云图":
                 st.write("### 词云图")
-                create_wordcloud(top_n_word_freq_df['词语'].tolist(), top_n_word_freq_df['频率'].tolist())
+                wordcloud_chart = create_wordcloud(top_n_word_freq_df['词语'].tolist(), top_n_word_freq_df['频率'].tolist())
+                st_pyecharts(wordcloud_chart)  # 使用 streamlit_echarts 渲染图表
             elif chart_type == "柱状图":
                 st.write("### 词频柱状图")
-                create_bar_chart(top_n_word_freq_df)
+                bar_chart = create_bar_chart(top_n_word_freq_df)
+                st_pyecharts(bar_chart)  # 使用 streamlit_echarts 渲染图表
             elif chart_type == "饼图":
                 st.write("### 词频饼图")
-                create_pie_chart(top_n_word_freq_df)
+                pie_chart = create_pie_chart(top_n_word_freq_df)
+                st_pyecharts(pie_chart)  # 使用 streamlit_echarts 渲染图表
             elif chart_type == "折线图":
                 st.write("### 词频折线图")
-                create_line_chart(top_n_word_freq_df)
+                line_chart = create_line_chart(top_n_word_freq_df)
+                st_pyecharts(line_chart)  # 使用 streamlit_echarts 渲染图表
             elif chart_type == "热力图":
                 st.write("### 热力图")
-                create_heatmap(top_n_word_freq_df)
+                heatmap_chart = create_heatmap(top_n_word_freq_df)
+                st_pyecharts(heatmap_chart)  # 使用 streamlit_echarts 渲染图表
             elif chart_type == "散点图":
                 st.write("### 词频散点图")
-                create_scatter_plot(top_n_word_freq_df)
+                scatter_chart = create_scatter_plot(top_n_word_freq_df)
+                st_pyecharts(scatter_chart)  # 使用 streamlit_echarts 渲染图表
 
 if __name__ == "__main__":
     main()
