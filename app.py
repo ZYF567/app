@@ -9,9 +9,6 @@ from pyecharts.charts import WordCloud, Bar, Pie, Line, HeatMap, Scatter
 from pyecharts import options as opts
 from pyecharts.globals import ThemeType
 
-# 初始化 Pyecharts
-pyecharts.options.init_notebook_mode()
-
 # 设置 pyecharts 的全局配置项
 opts.InitOpts(
     theme=ThemeType.LIGHT,  # 设置主题
