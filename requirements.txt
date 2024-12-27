@@ -1,9 +1,6 @@
 streamlit
 pandas
-matplotlib
-seaborn
-wordcloud
-numpy
 requests
 beautifulsoup4
 jieba
+pyecharts
