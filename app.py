@@ -1,19 +1,16 @@
 import streamlit as st
 import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns
+from wordcloud import WordCloud
+import numpy as np
 import requests
 from bs4 import BeautifulSoup
 import jieba
 from collections import Counter
-from pyecharts.charts import WordCloud, Bar, Pie, Line, HeatMap, Scatter
-from pyecharts import options as opts
-from pyecharts.globals import ThemeType
-import streamlit_echarts  # 导入 streamlit_echarts 库
 
-# 设置 pyecharts 的全局配置项
-opts.InitOpts(
-    theme=ThemeType.LIGHT,  # 设置主题
-    font_family='SimHei'  # 设置字体为黑体
-)
+matplotlib.rcParams['font.family'] = 'SimHei'  # 黑体（SimHei）字体路径
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
@@ -59,53 +56,109 @@ def process_text_for_frequency(text):
 
     # 返回所有词频统计结果
     return word_counts
-
 # 创建词云图
-def create_wordcloud(words, frequencies):
-    wordcloud = WordCloud()
-    wordcloud.add("", [list(z) for z in zip(words, frequencies)], word_size_range=[20, 100])
-    return wordcloud
+def create_wordcloud(words):
+    fig, ax = plt.subplots(figsize=(10, 5))
+    wordcloud = WordCloud(font_path="simhei.ttf", width=800, height=400).generate(' '.join(words))
+    ax.imshow(wordcloud, interpolation="bilinear")
+    ax.axis("off")
+    st.pyplot(fig)
 
 # 创建柱状图
 def create_bar_chart(data):
-    bar = Bar()
-    bar.add_xaxis(data['词语'].tolist())
-    bar.add_yaxis("频率", data['频率'].tolist())
-    bar.set_global_opts(title_opts=opts.TitleOpts(title="词频柱状图"))
-    return bar
+    if data is None or data.empty:
+        print("没有可绘制的数据。")
+        return
+
+    # 创建图表
+    fig, ax = plt.subplots(figsize=(10, 5))  # 设置图表大小
+    sns.barplot(x='词语', y='频率', data=data, palette="viridis")  # 绘制柱状图
+
+    # 设置图表属性
+    ax.set_xlabel("词语")  # X轴
+    ax.set_ylabel("频率")  # Y轴
+    ax.set_title("词频柱状图")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')  # 设置X轴标签的旋转角度和对齐方式
+
+    # 在每个柱子上方显示频率值
+    for p in ax.patches:
+        ax.annotate(f'{p.get_height()}',
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center',
+                    fontsize=10, color='black',
+                    xytext=(0, 5), textcoords='offset points')
+
+    # 显示图表
+    st.pyplot(fig)
 
 # 创建饼图
 def create_pie_chart(data):
-    pie = Pie()
-    pie.add("", [list(z) for z in zip(data['词语'].tolist(), data['频率'].tolist())])
-    pie.set_global_opts(title_opts=opts.TitleOpts(title="词频饼图"))
-    pie.set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
-    return pie
+    if data is None or data.empty:
+        print("没有可绘制的数据。")
+        return
+
+    # 如果数据已经将 '词语' 设置为索引，我们需要将其重置为列
+    if data.index.name == '词语':
+        data = data.reset_index()
+
+    # 提取频率作为饼图的大小，词语作为标签
+    labels = data['词语']
+    sizes = data['频率'].astype(float)  # 确保频率是浮点数类型
+    # 绘制饼图
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.set_title("词频饼图")
+    ax.axis('equal')  # 确保饼图是圆形的
+    st.pyplot(fig)
 
 # 创建折线图
 def create_line_chart(data):
-    line = Line()
-    line.add_xaxis(data['词语'].tolist())
-    line.add_yaxis("频率", data['频率'].tolist())
-    line.set_global_opts(title_opts=opts.TitleOpts(title="词频折线图"))
-    return line
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(data.index, data.values, marker='o', color='b', linestyle='-', linewidth=2, markersize=8)
+    ax.set_xlabel("词语")
+    ax.set_ylabel("频率")
+    ax.set_title("词频折线图")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+    st.pyplot(fig)
 
 # 创建热力图
 def create_heatmap(data):
-    heatmap = HeatMap()
-    data = data.pivot("词语", "频率", "频率")
-    heatmap.add_xaxis(data.index.tolist())
-    heatmap.add_yaxis("频率", data.columns.tolist(), data.values.tolist())
-    heatmap.set_global_opts(title_opts=opts.TitleOpts(title="热力图"))
-    return heatmap
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(data, annot=True, cmap="coolwarm", cbar=True, ax=ax)
+    ax.set_title("热力图")
+    st.pyplot(fig)
 
 # 创建散点图
 def create_scatter_plot(data):
-    scatter = Scatter()
-    scatter.add_xaxis(data['词语'].tolist())
-    scatter.add_yaxis("频率", data['频率'].tolist())
-    scatter.set_global_opts(title_opts=opts.TitleOpts(title="词频散点图"))
-    return scatter
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.scatter(data.index, data.values, color='r')
+    ax.set_xlabel("词语")
+    ax.set_ylabel("频率")
+    ax.set_title("词频散点图")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+    st.pyplot(fig)
+
+# 创建条形图
+def create_horizontal_bar_chart(data):
+    if data is None or data.empty:
+        print("没有可绘制的数据。")
+        return
+
+    # 如果数据已经将 '词语' 设置为索引，我们需要将其重置为列
+    if data.index.name == '词语':
+        data = data.reset_index()
+
+    # 创建图表
+    fig, ax = plt.subplots(figsize=(10, 6))
+    # 绘制水平条形图，这里我们使用 '词语' 作为 x 轴，'频率' 作为 y 轴
+    sns.barplot(x='频率', y='词语', data=data, palette="muted", orient="h")
+
+    # 设置图表属性
+    ax.set_xlabel("频率")
+    ax.set_ylabel("词语")
+    ax.set_title("词频条形图")
+    st.pyplot(fig)
+
 
 # 主函数
 def main():
@@ -131,7 +184,8 @@ def main():
         word_freq_counts = process_text_for_frequency(article_content)
 
         # 将词频转换为 pandas DataFrame
-        word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns=['词语', '频率']).sort_values(by='频率', ascending=False)
+        word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns=['词语', '频率']).sort_values(by='频率',
+                                                                                                          ascending=False)
 
         # 显示所有词频统计结果
         st.write("### 所有词频统计结果")
@@ -147,7 +201,7 @@ def main():
         # 侧边栏：选择图形类型和词频数量
         chart_type = st.sidebar.selectbox(
             "选择图形类型",
-            ["词云图", "柱状图", "饼图", "折线图", "热力图", "散点图"]
+            ["词云图", "柱状图", "饼图", "折线图", "热力图", "散点图", "条形图"]
         )
         top_n = st.sidebar.slider("选择显示的词频数量", min_value=1, max_value=len(word_freq_df), value=20, step=1)
 
@@ -157,28 +211,26 @@ def main():
 
             if chart_type == "词云图":
                 st.write("### 词云图")
-                wordcloud_chart = create_wordcloud(top_n_word_freq_df['词语'].tolist(), top_n_word_freq_df['频率'].tolist())
-                st_pyecharts(wordcloud_chart)  # 使用 streamlit_echarts 渲染图表
+                create_wordcloud(top_n_word_freq_df['词语'].tolist())
             elif chart_type == "柱状图":
                 st.write("### 词频柱状图")
-                bar_chart = create_bar_chart(top_n_word_freq_df)
-                st_pyecharts(bar_chart)  # 使用 streamlit_echarts 渲染图表
+                create_bar_chart(top_n_word_freq_df.set_index('词语'))
             elif chart_type == "饼图":
                 st.write("### 词频饼图")
-                pie_chart = create_pie_chart(top_n_word_freq_df)
-                st_pyecharts(pie_chart)  # 使用 streamlit_echarts 渲染图表
+                create_pie_chart(top_n_word_freq_df.set_index('词语'))
             elif chart_type == "折线图":
                 st.write("### 词频折线图")
-                line_chart = create_line_chart(top_n_word_freq_df)
-                st_pyecharts(line_chart)  # 使用 streamlit_echarts 渲染图表
+                create_line_chart(top_n_word_freq_df.set_index('词语'))
             elif chart_type == "热力图":
                 st.write("### 热力图")
-                heatmap_chart = create_heatmap(top_n_word_freq_df)
-                st_pyecharts(heatmap_chart)  # 使用 streamlit_echarts 渲染图表
+                create_heatmap(top_n_word_freq_df.set_index('词语').T)
             elif chart_type == "散点图":
                 st.write("### 词频散点图")
-                scatter_chart = create_scatter_plot(top_n_word_freq_df)
-                st_pyecharts(scatter_chart)  # 使用 streamlit_echarts 渲染图表
+                create_scatter_plot(top_n_word_freq_df.set_index('词语'))
+            elif chart_type == "条形图":
+                st.write("### 词频条形图")
+                create_horizontal_bar_chart(top_n_word_freq_df.set_index('词语'))
+
 
 if __name__ == "__main__":
     main()
