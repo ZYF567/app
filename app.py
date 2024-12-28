@@ -78,9 +78,9 @@ def create_bar_chart(data):
         return
 
     # 设置字体
-   matplotlib.rcParams['font.family'] = 'SimHei'
-   matplotlib.rcParams['font.sans-serif'] = ['SimHei']
-   matplotlib.rcParams['axes.unicode_minus'] = False
+    matplotlib.rcParams['font.family'] = 'SimHei'
+    matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+    matplotlib.rcParams['axes.unicode_minus'] = False
 
 
     # 创建图表
