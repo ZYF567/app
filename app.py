@@ -8,42 +8,6 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 
-# 设置字体为SimHei
-import plotly.io as pio
-pio.kaleido.scope.default_font = "SimHei"
-
-
-headers = {
-    'User - Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko)Chrome/89.0.4389.128 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q = 0.9,image/webp,*/*;q = 0.8',
-    'Accept - Encoding': 'gzip, deflate, br',
-    'Accept - Language': 'en - US,en;q = 0.5',
-    'Connection': 'keep - alive'
-}
-
-
-def fetch_article(url):
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # 如果请求失败，抛出异常
-
-        # 解析HTML
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # 查找 <article> 标签，其中 class="article" 和 id="mp - editor"
-        article = soup.find('article', class_='article', id='mp - editor')
-
-        # 如果找到了文章内容，则返回其文本内容，否则返回错误提示
-        if article:
-            return article.get_text(separator="\n", strip=True)  # 提取纯文本
-        else:
-            return "无法找到文章内容，页面结构可能有所不同。"
-
-    except requests.exceptions.RequestException as e:
-        # 捕获请求异常并返回错误信息
-        return f"请求失败: {e}"
-
-
 # 对文本进行分词并统计词频
 def process_text_for_frequency(text):
     # 使用 jieba 分词
@@ -82,7 +46,15 @@ def create_bar_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
     fig = px.bar(data, x='词语', y='频率', title="词频柱状图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
     st.plotly_chart(fig)
 
 
@@ -91,7 +63,15 @@ def create_pie_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
     fig = px.pie(data, names='词语', values='频率', title="词频饼图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
     st.plotly_chart(fig)
 
 
@@ -100,7 +80,15 @@ def create_line_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
     fig = px.line(data, x='词语', y='频率', title="词频折线图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
     st.plotly_chart(fig)
 
 
@@ -109,7 +97,15 @@ def create_heatmap(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
     fig = px.imshow(data, title="热力图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
     st.plotly_chart(fig)
 
 
@@ -118,7 +114,15 @@ def create_scatter_plot(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
     fig = px.scatter(data, x='词语', y='频率', title="词频散点图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
     st.plotly_chart(fig)
 
 
@@ -127,7 +131,15 @@ def create_horizontal_bar_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
     fig = px.bar(data, x='频率', y='词语', orientation='h', title="词频条形图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
     st.plotly_chart(fig)
 
 
@@ -139,12 +151,29 @@ def main():
     url = st.text_input("请输入文章URL:")
 
     if url:
-        # 抓取文章内容
-        article_content = fetch_article(url)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko)Chrome/89.0.4389.128 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Connection': 'keep-alive'
+        }
 
-        # 如果抓取失败，则显示错误信息
-        if "请求失败" in article_content or "无法找到" in article_content:
-            st.error(article_content)
+        # 抓取文章内容
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # 如果请求失败，抛出异常
+
+        # 解析HTML
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # 查找 <article> 标签，其中 class="article" 和 id="mp-editor"
+        article = soup.find('article', class_='article', id='mp-editor')
+
+        # 如果找到了文章内容，则返回其文本内容，否则返回错误提示
+        if article:
+            article_content = article.get_text(separator="\n", strip=True)  # 提取纯文本
+        else:
+            st.error("无法找到文章内容，页面结构可能有所不同。")
             return
 
         # 显示全文
