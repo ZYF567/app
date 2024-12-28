@@ -98,16 +98,28 @@ def create_heatmap(data):
         print("没有可绘制的数据。")
         return
 
-    fig = px.imshow(data, title="热力图")
+    # 获取词语列表作为行标签（假设数据的行索引是词语）
+    words = data.index.tolist()
+    # 获取列标签（这里简单假设列索引是有意义的分类，比如文章段落序号等，你可以根据实际数据情况调整）
+    columns = data.columns.tolist()  
+
+    fig = px.imshow(data,
+                    labels=dict(x="分类", y="词语", color="词频"),  # 设置坐标轴和颜色条的标签
+                    x=columns,
+                    y=words,
+                    title="词频热力图")
     fig.update_layout(
         font=dict(
             family="SimHei",
             size=12,
             color="Black"
-        )
+        ),
+        xaxis_title="分类",  # 明确设置 x 轴标题
+        yaxis_title="词语",  # 明确设置 y 轴标题
+        coloraxis_colorbar_title="词频"  # 设置颜色条标题
     )
     st.plotly_chart(fig)
-
+    
 
 # 创建散点图
 def create_scatter_plot(data):
