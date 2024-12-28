@@ -80,22 +80,27 @@ def create_bar_chart(data):
         print("没有可绘制的数据。")
         return
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-    
-     font_path = 'SimHei.ttf' 
+    # 创建图表
+    fig, ax = plt.subplots(figsize=(10, 5))  # 设置图表大小
+    sns.barplot(x='词语', y='频率', data=data, palette="viridis")  # 绘制柱状图
 
-    sns.barplot(x='词语', y='频率', data=data, palette="viridis")
-    ax.set_xlabel("词语")
-    ax.set_ylabel("频率")
+    # 设置图表属性
+    ax.set_xlabel("词语")  # X轴
+    ax.set_ylabel("频率")  # Y轴
     ax.set_title("词频柱状图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')  # 设置X轴标签的旋转角度和对齐方式
+
+    # 在每个柱子上方显示频率值
     for p in ax.patches:
         ax.annotate(f'{p.get_height()}',
                     (p.get_x() + p.get_width() / 2., p.get_height()),
                     ha='center', va='center',
                     fontsize=10, color='black',
                     xytext=(0, 5), textcoords='offset points')
-    st.pyplot(fig)  
+
+    # 显示图表
+    st.pyplot(fig)
+    
 # 创建饼图
 def create_pie_chart(data):
     if data is None or data.empty:
