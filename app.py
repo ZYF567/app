@@ -81,6 +81,9 @@ def create_bar_chart(data):
         return
 
     fig, ax = plt.subplots(figsize=(10, 5))
+    
+     font_path = 'SimHei.ttf' 
+
     sns.barplot(x='词语', y='频率', data=data, palette="viridis")
     ax.set_xlabel("词语")
     ax.set_ylabel("频率")
