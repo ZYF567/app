@@ -108,6 +108,23 @@ def create_heatmap(data):
                     x=columns,
                     y=words,
                     title="词频热力图")
+
+    # 遍历数据矩阵，在每个单元格添加注释（显示词语，词频大于0时）
+    for y_idx, row in enumerate(data.values):
+        for x_idx, value in enumerate(row):
+            if value > 0:
+                fig.add_annotation(
+                    x=x_idx,
+                    y=y_idx,
+                    text=words[y_idx],
+                    showarrow=False,
+                    font=dict(
+                        family="SimHei",
+                        size=10,
+                        color="Black"
+                    )
+                )
+
     fig.update_layout(
         font=dict(
             family="SimHei",
