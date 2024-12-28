@@ -93,12 +93,13 @@ def create_line_chart(data):
     st.plotly_chart(fig)
 
 
-# 创建面积图
-def create_area_chart(data):
+# 创建箱线图
+def create_box_plot(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
-    fig = px.area(data, x='词语', y='频率', title="词频面积图")
+
+    fig = px.box(data, x='词语', y='频率', title="词频箱线图")
     fig.update_layout(
         font=dict(
             family="SimHei",
@@ -160,7 +161,7 @@ def main():
         }
 
         # 抓取文章内容
-        response = requests.get(url, headers = headers)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()  # 如果请求失败，抛出异常
 
         # 解析HTML
@@ -178,21 +179,21 @@ def main():
 
         # 显示全文
         st.write("### 文章全文")
-        st.text_area("全文显示", value = article_content, height = 300)
+        st.text_area("全文显示", value=article_content, height=300)
 
         # 分词并统计词频
         word_freq_counts = process_text_for_frequency(article_content)
 
         # 将词频转换为 pandas DataFrame
-        word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns = ['词语', '频率']).sort_values(by = '频率',
-                                                                                                          ascending = False)
+        word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns=['词语', '频率']).sort_values(by='频率',
+                                                                                                          ascending=False)
 
         # 显示所有词频统计结果
         st.write("### 所有词频统计结果")
         st.dataframe(word_freq_df)
 
         # 获取词频排名前20的词汇
-        top_20_word_freq_df = pd.DataFrame(list(word_freq_counts.most_common(20)), columns = ['词语', '频率'])
+        top_20_word_freq_df = pd.DataFrame(list(word_freq_counts.most_common(20)), columns=['词语', '频率'])
 
         # 显示词频 Top 20 表格
         st.write("### 词频 Top 20")
@@ -201,9 +202,9 @@ def main():
         # 侧边栏：选择图形类型和词频数量
         chart_type = st.sidebar.selectbox(
             "选择图形类型",
-            ["词云图", "柱状图", "饼图", "折线图", "面积图", "散点图", "条形图"]
+            ["词云图", "柱状图", "饼图", "折线图", "箱线图", "散点图", "条形图"]
         )
-        top_n = st.sidebar.slider("选择显示的词频数量", min_value = 1, max_value = len(word_freq_df), value = 20, step = 1)
+        top_n = st.sidebar.slider("选择显示的词频数量", min_value=1, max_value=len(word_freq_df), value=20, step=1)
 
         # 根据选择的词频数量和图形类型绘制相应的图形
         if top_n > 0:
@@ -221,9 +222,9 @@ def main():
             elif chart_type == "折线图":
                 st.write("### 词频折线图")
                 create_line_chart(top_n_word_freq_df)
-            elif chart_type == "面积图":
-                st.write("### 词频面积图")
-                create_area_chart(top_n_word_freq_df)
+            elif chart_type == "箱线图":
+                st.write("### 词频箱线图")
+                create_box_plot(top_n_word_freq_df)
             elif chart_type == "散点图":
                 st.write("### 词频散点图")
                 create_scatter_plot(top_n_word_freq_df)
