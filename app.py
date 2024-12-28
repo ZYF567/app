@@ -94,51 +94,10 @@ def create_line_chart(data):
 
 # 创建热力图
 def create_heatmap(data):
-    if data is None or data.empty:
-        print("没有可绘制的数据。")
-        return
-
-    # 获取词语列表作为行标签（假设数据的行索引是词语）
-    words = data.index.tolist()
-    # 获取列标签（这里简单假设列索引是有意义的分类，比如文章段落序号等，你可以根据实际数据情况调整）
-    columns = data.columns.tolist()  
-
-    fig = px.imshow(data,
-                    labels=dict(x="分类", y="词语", color="词频"),  # 设置坐标轴和颜色条的标签
-                    x=columns,
-                    y=words,
-                    title="词频热力图")
-
-    # 遍历数据矩阵，在每个单元格添加注释（显示词语，词频大于0时）
-    for y_idx, row in enumerate(data.values):
-        for x_idx, value in enumerate(row):
-            # 检查数据类型，如果不是数值类型，尝试转换（这里简单示例处理整数和浮点数情况，你可根据实际完善）
-            if isinstance(value, (int, float)):
-                if value > 0:
-                    fig.add_annotation(
-                        x=x_idx,
-                        y=y_idx,
-                        text=words[y_idx],
-                        showarrow=False,
-                        font=dict(
-                            family="SimHei",
-                            size=10,
-                            color="Black"
-                        )
-                    )
-            else:
-                print(f"发现非数值类型数据: {value}，所在位置: ({y_idx}, {x_idx})")
-    fig.update_layout(
-        font=dict(
-            family="SimHei",
-            size=12,
-            color="Black"
-        ),
-        xaxis_title="分类",  # 明确设置 x 轴标题
-        yaxis_title="词语",  # 明确设置 y 轴标题
-        coloraxis_colorbar_title="词频"  # 设置颜色条标题
-        )
-    st.plotly_chart(fig)
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(data, annot=True, cmap="coolwarm", cbar=True, ax=ax)
+    ax.set_title("热力图")
+    st.pyplot(fig)
     
 
 # 创建散点图
