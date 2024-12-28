@@ -117,9 +117,7 @@ def create_line_chart(data):
     ax.set_xlabel("词语")
     ax.set_ylabel("频率")
     ax.set_title("词频折线图")
-    
-    # 设置中文显示和旋转x轴标签
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, fontname='SimHei')  # 使用SimHei字体
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
     st.pyplot(fig)
 # 创建热力图
 def create_heatmap(data):
