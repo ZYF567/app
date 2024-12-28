@@ -11,11 +11,6 @@ import jieba
 from collections import Counter
 import os
 
-# 设置字体路径，确保所有图表都可以使用SimHei字体
-font_path = 'SimHei.ttf'  # 假设字体文件已经上传到应用根目录
-if not os.path.isfile(font_path):
-    st.error("字体文件SimHei.ttf不存在，请上传字体文件到应用根目录。")
-
 # 配置matplotlib字体
 from matplotlib import rcParams
 rcParams['font.family'] = 'SimHei'  # 设置默认字体为SimHei
@@ -65,6 +60,7 @@ def process_text_for_frequency(text):
 
     # 返回所有词频统计结果
     return word_counts
+    
 # 创建词云图
 def create_wordcloud(words):
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -121,9 +117,10 @@ def create_line_chart(data):
     ax.set_xlabel("词语")
     ax.set_ylabel("频率")
     ax.set_title("词频折线图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+    
+    # 设置中文显示和旋转x轴标签
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, fontname='SimHei')  # 使用SimHei字体
     st.pyplot(fig)
-
 # 创建热力图
 def create_heatmap(data):
     fig, ax = plt.subplots(figsize=(10, 8))
