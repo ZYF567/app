@@ -104,7 +104,6 @@ def create_bar_chart(data):
                     fontdict={'fontname': font_path})
 
     st.pyplot(fig)
-
 # 创建饼图
 def create_pie_chart(data):
     if data is None or data.empty:
