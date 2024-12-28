@@ -102,8 +102,10 @@ def create_bar_chart(data):
     # 显示图表
     st.pyplot(fig)
     
-# 创建饼图
 def create_pie_chart(data):
+    matplotlib.rcParams['font.family'] = 'SimHei'
+    matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+    matplotlib.rcParams['axes.unicode_minus'] = False
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
