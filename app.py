@@ -11,7 +11,10 @@ import jieba
 from collections import Counter
 import os
 
-matplotlib.rcParams['font.family'] = 'SimHei'  # 黑体（SimHei）字体路径
+# 设置matplotlib字体为SimHei
+matplotlib.rcParams['font.family'] = 'SimHei'
+matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为SimHei
+matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
