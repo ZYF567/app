@@ -98,13 +98,25 @@ def create_heatmap(data):
         print("没有可绘制的数据。")
         return
 
-    fig = px.imshow(data, title="热力图")
+    # 获取词语列表作为y轴标签
+    words = data.index.tolist()
+    # 获取类别列表作为x轴标签（这里假设数据的列名是类别）
+    categories = data.columns.tolist()
+
+    fig = px.imshow(data,
+                    labels=dict(x="类别", y="词语", color="词频"),
+                    x=categories,
+                    y=words,
+                    title="热力图")
     fig.update_layout(
         font=dict(
             family="SimHei",
             size=12,
             color="Black"
-        )
+        ),
+        xaxis_title="类别",
+        yaxis_title="词语",
+        coloraxis_colorbar_title="词频"
     )
     st.plotly_chart(fig)
 
