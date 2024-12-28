@@ -94,11 +94,19 @@ def create_line_chart(data):
 
 # 创建热力图
 def create_heatmap(data):
-    fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(data, annot=True, cmap="coolwarm", cbar=True, ax=ax)
-    ax.set_title("热力图")
-    st.pyplot(fig)
-    
+    if data is None or data.empty:
+        print("没有可绘制的数据。")
+        return
+
+    fig = px.imshow(data, title="热力图")
+    fig.update_layout(
+        font=dict(
+            family="SimHei",
+            size=12,
+            color="Black"
+        )
+    )
+    st.plotly_chart(fig)
 
 # 创建散点图
 def create_scatter_plot(data):
