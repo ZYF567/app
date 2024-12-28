@@ -9,16 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 import jieba
 from collections import Counter
+import os
 
-import streamlit as st
-custom_css = """
-<style>
-    body {
-        font-family: 'SimHei', sans-serif;
-    }
-</style>
-"""
-st.markdown(custom_css, unsafe_allow_html=True)
+# 设置matplotlib字体
+matplotlib.rcParams['font.family'] = 'SimHei'  # 黑体（SimHei）字体路径
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
@@ -64,10 +58,15 @@ def process_text_for_frequency(text):
 
     # 返回所有词频统计结果
     return word_counts
+
 # 创建词云图
 def create_wordcloud(words):
     fig, ax = plt.subplots(figsize=(10, 5))
-    wordcloud = WordCloud(font_path="simhei.ttf", width=800, height=400).generate(' '.join(words))
+    # 获取当前工作目录
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 构建字体文件的绝对路径
+    font_path = os.path.join(current_dir, 'simhei.ttf')
+    wordcloud = WordCloud(font_path=font_path, width=800, height=400).generate(' '.join(words))
     ax.imshow(wordcloud, interpolation="bilinear")
     ax.axis("off")
     st.pyplot(fig)
@@ -166,7 +165,6 @@ def create_horizontal_bar_chart(data):
     ax.set_ylabel("词语")
     ax.set_title("词频条形图")
     st.pyplot(fig)
-
 
 # 主函数
 def main():
