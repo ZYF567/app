@@ -11,10 +11,15 @@ import jieba
 from collections import Counter
 import os
 
-# 设置matplotlib字体为SimHei
-matplotlib.rcParams['font.family'] = 'SimHei'
-matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为SimHei
-matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+# 设置字体路径，确保所有图表都可以使用SimHei字体
+font_path = 'SimHei.ttf'  # 假设字体文件已经上传到应用根目录
+if not os.path.isfile(font_path):
+    st.error("字体文件SimHei.ttf不存在，请上传字体文件到应用根目录。")
+
+# 配置matplotlib字体
+from matplotlib import rcParams
+rcParams['font.family'] = 'SimHei'  # 设置默认字体为SimHei
+rcParams['axes.unicode_minus'] = False  # 处理负号显示问题
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
