@@ -26,37 +26,20 @@ def fetch_article(url):
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()  # 如果请求失败，抛出异常
-
-        # 解析HTML
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # 查找 <article> 标签，其中 class="article" 和 id="mp-editor"
         article = soup.find('article', class_='article', id='mp-editor')
-
-        # 如果找到了文章内容，则返回其文本内容，否则返回错误提示
         if article:
             return article.get_text(separator="\n", strip=True)  # 提取纯文本
         else:
             return "无法找到文章内容，页面结构可能有所不同。"
-
     except requests.exceptions.RequestException as e:
-        # 捕获请求异常并返回错误信息
         return f"请求失败: {e}"
 
 # 对文本进行分词并统计词频
 def process_text_for_frequency(text):
-    # 使用 jieba 分词
     words = jieba.cut(text)
-
-    # 过滤掉无意义的单词（如：空格、数字、标点等）
-    filtered_words = [word for word in words if
-                      len(word) > 1 and word.strip() not in ['\n', ' ', '。', ',', '，', '！', '：', '；', '(', ')', '“',
-                                                             '”']]
-
-    # 统计词频
+    filtered_words = [word for word in words if len(word) > 1 and word.strip() not in ['\n', ' ', '。', ',', '，', '！', '：', '；', '(', ')', '“', '”']]
     word_counts = Counter(filtered_words)
-
-    # 返回所有词频统计结果
     return word_counts
 
 # 创建词云图
@@ -64,6 +47,9 @@ def create_wordcloud(words):
     fig, ax = plt.subplots(figsize=(10, 5))
     # 指定字体文件的路径
     font_path = 'simhei.ttf'  # 假设字体文件已经上传到应用根目录
+    if not os.path.isfile(font_path):
+        st.error("字体文件simhei.ttf不存在，请上传字体文件到应用根目录。")
+        return
     wordcloud = WordCloud(font_path=font_path, width=800, height=400).generate(' '.join(words))
     ax.imshow(wordcloud, interpolation="bilinear")
     ax.axis("off")
