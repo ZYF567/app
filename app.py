@@ -156,74 +156,33 @@ def create_horizontal_bar_chart(data):
 # 主函数
 def main():
     st.title("文章词频分析")
-
-    # 文章URL输入框
     url = st.text_input("请输入文章URL:")
-
     if url:
-        # 抓取文章内容
         article_content = fetch_article(url)
-
-        # 如果抓取失败，则显示错误信息
         if "请求失败" in article_content or "无法找到" in article_content:
             st.error(article_content)
             return
-
-        # 显示全文
         st.write("### 文章全文")
         st.text_area("全文显示", value=article_content, height=300)
-
-        # 分词并统计词频
         word_freq_counts = process_text_for_frequency(article_content)
-
-        # 将词频转换为 pandas DataFrame
-        word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns=['词语', '频率']).sort_values(by='频率',
-                                                                                                          ascending=False)
-
-              # 显示所有词频统计结果
+        word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns=['词语', '频率']).sort_values(by='频率', ascending=False)
         st.write("### 所有词频统计结果")
         st.dataframe(word_freq_df)
-
-        # 获取词频排名前20的词汇
         top_20_word_freq_df = pd.DataFrame(list(word_freq_counts.most_common(20)), columns=['词语', '频率'])
-
-        # 显示词频 Top 20 表格
         st.write("### 词频 Top 20")
         st.dataframe(top_20_word_freq_df)
-
-        # 侧边栏：选择图形类型和词频数量
-        chart_type = st.sidebar.selectbox(
-            "选择图形类型",
-            ["词云图", "柱状图", "饼图", "折线图", "热力图", "散点图", "条形图"]
-        )
         top_n = st.sidebar.slider("选择显示的词频数量", min_value=1, max_value=len(word_freq_df), value=20, step=1)
-
-        # 根据选择的词频数量和图形类型绘制相应的图形
         if top_n > 0:
             top_n_word_freq_df = word_freq_df.head(top_n)
+            create_wordcloud(top_n_word_freq_df['词语'].tolist())
+            create_bar_chart(top_n_word_freq_df.set_index('词语'))
+            create_pie_chart(top_n_word_freq_df.set_index('
 
-            if chart_type == "词云图":
-                st.write("### 词云图")
-                create_wordcloud(top_n_word_freq_df['词语'].tolist())
-            elif chart_type == "柱状图":
-                st.write("### 词频柱状图")
-                create_bar_chart(top_n_word_freq_df.set_index('词语'))
-            elif chart_type == "饼图":
-                st.write("### 词频饼图")
-                create_pie_chart(top_n_word_freq_df.set_index('词语'))
-            elif chart_type == "折线图":
-                st.write("### 词频折线图")
-                create_line_chart(top_n_word_freq_df.set_index('词语'))
-            elif chart_type == "热力图":
-                st.write("### 热力图")
-                create_heatmap(top_n_word_freq_df.set_index('词语').T)
-            elif chart_type == "散点图":
-                st.write("### 词频散点图")
-                create_scatter_plot(top_n_word_freq_df.set_index('词语'))
-            elif chart_type == "条形图":
-                st.write("### 词频条形图")
-                create_horizontal_bar_chart(top_n_word_freq_df.set_index('词语'))
+词语'))
+create_line_chart(top_n_word_freq_df.set_index('词语'))
+create_heatmap(top_n_word_freq_df.set_index('词语').T)
+create_scatter_plot(top_n_word_freq_df.set_index('词语'))
+create_horizontal_bar_chart(top_n_word_freq_df.set_index('词语'))
 
-
-if __name__ == "__main__":
-    main()
+if name == "main":
+main()
