@@ -66,6 +66,9 @@ def create_wordcloud(words):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     # 构建字体文件的绝对路径
     font_path = os.path.join(current_dir, 'simhei.ttf')
+    if not os.path.exists(font_path):
+        st.error("字体文件不存在，请上传字体文件到应用目录。")
+        return
     wordcloud = WordCloud(font_path=font_path, width=800, height=400).generate(' '.join(words))
     ax.imshow(wordcloud, interpolation="bilinear")
     ax.axis("off")
@@ -193,7 +196,7 @@ def main():
         word_freq_df = pd.DataFrame(list(word_freq_counts.items()), columns=['词语', '频率']).sort_values(by='频率',
                                                                                                           ascending=False)
 
-        # 显示所有词频统计结果
+              # 显示所有词频统计结果
         st.write("### 所有词频统计结果")
         st.dataframe(word_freq_df)
 
