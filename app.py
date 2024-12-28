@@ -7,8 +7,6 @@ from collections import Counter
 import os
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.preprocessing import MinMaxScaler  # 新增，用于数据归一化
-
 
 # 对文本进行分词并统计词频
 def process_text_for_frequency(text):
@@ -100,12 +98,6 @@ def create_heatmap(data):
         print("没有可绘制的数据。")
         return
 
-    # 对词频数据进行归一化处理，使颜色显示更合理
-    freq_data = data['频率'].values.reshape(-1, 1)
-    scaler = MinMaxScaler()
-    scaled_freq_data = scaler.fit_transform(freq_data)
-    data['频率'] = scaled_freq_data.flatten()
-
     # 获取词语列表作为y轴标签
     words = data.index.tolist()
     # 获取类别列表作为x轴标签（这里假设数据的列名是类别）
@@ -115,9 +107,7 @@ def create_heatmap(data):
                     labels=dict(x="类别", y="词语", color="词频"),
                     x=categories,
                     y=words,
-                    title="热力图",
-                    color_continuous_scale='Viridis'  # 选择更合适的颜色映射，可根据喜好尝试其他如'RdBu'等
-                    )
+                    title="热力图")
     fig.update_layout(
         font=dict(
             family="SimHei",
@@ -126,13 +116,9 @@ def create_heatmap(data):
         ),
         xaxis_title="类别",
         yaxis_title="词语",
-        coloraxis_colorbar_title="词频",
-        width=800,  # 调整宽度，使图形显示更合适
-        height=600,  # 调整高度
-        margin=dict(l=50, r=50, b=50, t=50)  # 调整边距，优化布局
+        coloraxis_colorbar_title="词频"
     )
     st.plotly_chart(fig)
-
 
 # 创建散点图
 def create_scatter_plot(data):
