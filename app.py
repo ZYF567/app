@@ -75,26 +75,35 @@ def create_wordcloud(words):
 
 # 创建柱状图
 def create_bar_chart(data):
-     fig, ax = plt.subplots(figsize=(10, 5))
-    # 指定字体文件的路径
-    font_path = 'SimHei.ttf' 
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
 
+    # 指定字体文件的路径
+    font_path = 'SimHei.ttf'
+    plt.rcParams['font.family'] = 'SimHei'
+    plt.rcParams['font.sans-serif'] = [font_path]  # 指定默认字体为SimHei.ttf
+    plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.barplot(x='词语', y='频率', data=data, palette="viridis")
-    ax.set_xlabel("词语")
-    ax.set_ylabel("频率")
-    ax.set_title("词频柱状图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+
+    # 设置图表属性，指定字体
+    ax.set_xlabel("词语", fontdict={'fontname': font_path})
+    ax.set_ylabel("频率", fontdict={'fontname': font_path})
+    ax.set_title("词频柱状图", fontdict={'fontname': font_path})
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontdict={'fontname': font_path})
+
+    # 在每个柱子上方显示频率值
     for p in ax.patches:
         ax.annotate(f'{p.get_height()}',
                     (p.get_x() + p.get_width() / 2., p.get_height()),
                     ha='center', va='center',
                     fontsize=10, color='black',
-                    xytext=(0, 5), textcoords='offset points')
-    st.pyplot(fig)  
+                    xytext=(0, 5), textcoords='offset points',
+                    fontdict={'fontname': font_path})
+
+    st.pyplot(fig)
 
 # 创建饼图
 def create_pie_chart(data):
