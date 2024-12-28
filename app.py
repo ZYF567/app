@@ -79,25 +79,18 @@ def create_bar_chart(data):
         print("没有可绘制的数据。")
         return
 
-    # 创建图表
-    fig, ax = plt.subplots(figsize=(10, 5))  # 设置图表大小
-    sns.barplot(x='词语', y='频率', data=data, palette="viridis")  # 绘制柱状图
-
-    # 设置图表属性
-    ax.set_xlabel("词语")  # X轴
-    ax.set_ylabel("频率")  # Y轴
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.barplot(x='词语', y='频率', data=data, palette="viridis")
+    ax.set_xlabel("词语")
+    ax.set_ylabel("频率")
     ax.set_title("词频柱状图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')  # 设置X轴标签的旋转角度和对齐方式
-
-    # 在每个柱子上方显示频率值
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
     for p in ax.patches:
         ax.annotate(f'{p.get_height()}',
                     (p.get_x() + p.get_width() / 2., p.get_height()),
                     ha='center', va='center',
                     fontsize=10, color='black',
                     xytext=(0, 5), textcoords='offset points')
-
-    # 显示图表
     st.pyplot(fig)
 
 # 创建饼图
@@ -106,18 +99,15 @@ def create_pie_chart(data):
         print("没有可绘制的数据。")
         return
 
-    # 如果数据已经将 '词语' 设置为索引，我们需要将其重置为列
     if data.index.name == '词语':
         data = data.reset_index()
 
-    # 提取频率作为饼图的大小，词语作为标签
     labels = data['词语']
-    sizes = data['频率'].astype(float)  # 确保频率是浮点数类型
-    # 绘制饼图
+    sizes = data['频率'].astype(float)
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
     ax.set_title("词频饼图")
-    ax.axis('equal')  # 确保饼图是圆形的
+    ax.axis('equal')
     st.pyplot(fig)
 
 # 创建折线图
@@ -153,21 +143,15 @@ def create_horizontal_bar_chart(data):
         print("没有可绘制的数据。")
         return
 
-    # 如果数据已经将 '词语' 设置为索引，我们需要将其重置为列
     if data.index.name == '词语':
         data = data.reset_index()
 
-    # 创建图表
     fig, ax = plt.subplots(figsize=(10, 6))
-    # 绘制水平条形图，这里我们使用 '词语' 作为 x 轴，'频率' 作为 y 轴
     sns.barplot(x='频率', y='词语', data=data, palette="muted", orient="h")
-
-    # 设置图表属性
     ax.set_xlabel("频率")
     ax.set_ylabel("词语")
     ax.set_title("词频条形图")
     st.pyplot(fig)
-
 
 # 主函数
 def main():
