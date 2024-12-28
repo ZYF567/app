@@ -62,8 +62,8 @@ def create_bar_chart(data):
 # 创建饼图
 def create_pie_chart(data):
     if data is None or data.empty:
-        print("没有可绘制的数据。")
-        return
+    print("没有可绘制的数据。")
+    return
 
     fig = px.pie(data, names='词语', values='频率', title="词频饼图")
     fig.update_layout(
