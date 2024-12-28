@@ -60,26 +60,22 @@ def create_bar_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
-
-    # 创建图表
-    fig, ax = plt.subplots(figsize=(10, 5))  # 设置图表大小
-    sns.barplot(x='词语', y='频率', data=data, palette="viridis")  # 绘制柱状图
-
-    # 设置图表属性
-    ax.set_xlabel("词语")  # X轴
-    ax.set_ylabel("频率")  # Y轴
-    ax.set_title("词频柱状图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')  # 设置X轴标签的旋转角度和对齐方式
-
-    # 在每个柱子上方显示频率值
+    font_path = 'SimHei.ttf'
+    if not os.path.isfile(font_path):
+        st.error("字体文件SimHei.ttf不存在，请上传字体文件到应用根目录。")
+        return
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.barplot(x='词语', y='频率', data=data, palette="viridis")
+    ax.set_xlabel("词语", fontdict={'fontname': 'SimHei'})
+    ax.set_ylabel("频率", fontdict={'fontname': 'SimHei'})
+    ax.set_title("词频柱状图", fontdict={'fontname': 'SimHei'})
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontdict={'fontname': 'SimHei'})
     for p in ax.patches:
         ax.annotate(f'{p.get_height()}',
                     (p.get_x() + p.get_width() / 2., p.get_height()),
                     ha='center', va='center',
                     fontsize=10, color='black',
                     xytext=(0, 5), textcoords='offset points')
-
-    # 显示图表
     st.pyplot(fig)
 
 # 创建饼图
@@ -87,46 +83,45 @@ def create_pie_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
-
-    # 如果数据已经将 '词语' 设置为索引，我们需要将其重置为列
+    font_path = 'SimHei.ttf'
+    if not os.path.isfile(font_path):
+        st.error("字体文件SimHei.ttf不存在，请上传字体文件到应用根目录。")
+        return
     if data.index.name == '词语':
         data = data.reset_index()
-
-    # 提取频率作为饼图的大小，词语作为标签
     labels = data['词语']
-    sizes = data['频率'].astype(float)  # 确保频率是浮点数类型
-    # 绘制饼图
+    sizes = data['频率'].astype(float)
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-    ax.set_title("词频饼图")
-    ax.axis('equal')  # 确保饼图是圆形的
+    ax.set_title("词频饼图", fontdict={'fontname': 'SimHei'})
+    ax.axis('equal')
     st.pyplot(fig)
 
 # 创建折线图
 def create_line_chart(data):
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(data.index, data.values, marker='o', color='b', linestyle='-', linewidth=2, markersize=8)
-    ax.set_xlabel("词语")
-    ax.set_ylabel("频率")
-    ax.set_title("词频折线图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+    ax.set_xlabel("词语", fontdict={'fontname': 'SimHei'})
+    ax.set_ylabel("频率", fontdict={'fontname': 'SimHei'})
+    ax.set_title("词频折线图", fontdict={'fontname': 'SimHei'})
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, fontdict={'fontname': 'SimHei'})
     st.pyplot(fig)
 
 # 创建热力图
 def create_heatmap(data):
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(data, annot=True, cmap="coolwarm", cbar=True, ax=ax)
-    ax.set_title("热力图")
+    ax.set_title("热力图", fontdict={'fontname': 'SimHei'})
     st.pyplot(fig)
 
 # 创建散点图
 def create_scatter_plot(data):
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.scatter(data.index, data.values, color='r')
-    ax.set_xlabel("词语")
-    ax.set_ylabel("频率")
-    ax.set_title("词频散点图")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+    ax.set_xlabel("词语", fontdict={'fontname': 'SimHei'})
+    ax.set_ylabel("频率", fontdict={'fontname': 'SimHei'})
+    ax.set_title("词频散点图", fontdict={'fontname': 'SimHei'})
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, fontdict={'fontname': 'SimHei'})
     st.pyplot(fig)
 
 # 创建条形图
@@ -134,10 +129,18 @@ def create_horizontal_bar_chart(data):
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
-
-    # 如果数据已经将 '词语' 设置为索引，我们需要将其重置为列
+    font_path = 'SimHei.ttf'
+    if not os.path.isfile(font_path):
+        st.error("字体文件SimHei.ttf不存在，请上传字体文件到应用根目录。")
+        return
     if data.index.name == '词语':
         data = data.reset_index()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(x='频率', y='词语', data=data, palette="muted", orient="h")
+    ax.set_xlabel("频率", fontdict={'fontname': 'SimHei'})
+    ax.set_ylabel("词语", fontdict={'fontname': 'SimHei'})
+    ax.set_title("词频条形图", fontdict={'fontname': 'SimHei'})
+    st.pyplot(fig)
 
     # 创建图表
     fig, ax = plt.subplots(figsize=(10, 6))
