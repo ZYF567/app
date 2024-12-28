@@ -11,10 +11,9 @@ import jieba
 from collections import Counter
 import os
 
-# 设置matplotlib字体为SimHei
 matplotlib.rcParams['font.family'] = 'SimHei'
-matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为SimHei
-matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
@@ -74,8 +73,10 @@ def create_wordcloud(words):
     ax.axis("off")
     st.pyplot(fig)
 
-# 创建柱状图
 def create_bar_chart(data):
+    matplotlib.rcParams['font.family'] = 'SimHei'
+    matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+    matplotlib.rcParams['axes.unicode_minus'] = False
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
