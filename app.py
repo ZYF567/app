@@ -10,8 +10,15 @@ from bs4 import BeautifulSoup
 import jieba
 from collections import Counter
 
-matplotlib.rcParams['font.family'] = 'sans-serif'
-matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 使用字体名称
+import streamlit as st
+custom_css = """
+<style>
+    body {
+        font-family: 'SimHei', sans-serif;
+    }
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
