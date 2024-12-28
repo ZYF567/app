@@ -112,19 +112,22 @@ def create_heatmap(data):
     # 遍历数据矩阵，在每个单元格添加注释（显示词语，词频大于0时）
     for y_idx, row in enumerate(data.values):
         for x_idx, value in enumerate(row):
-            if value > 0:
-                fig.add_annotation(
-                    x=x_idx,
-                    y=y_idx,
-                    text=words[y_idx],
-                    showarrow=False,
-                    font=dict(
-                        family="SimHei",
-                        size=10,
-                        color="Black"
+            # 检查数据类型，如果不是数值类型，尝试转换（这里简单示例处理整数和浮点数情况，你可根据实际完善）
+            if isinstance(value, (int, float)):
+                if value > 0:
+                    fig.add_annotation(
+                        x=x_idx,
+                        y=y_idx,
+                        text=words[y_idx],
+                        showarrow=False,
+                        font=dict(
+                            family="SimHei",
+                            size=10,
+                            color="Black"
+                        )
                     )
-                )
-
+            else:
+                print(f"发现非数值类型数据: {value}，所在位置: ({y_idx}, {x_idx})")
     fig.update_layout(
         font=dict(
             family="SimHei",
@@ -134,7 +137,7 @@ def create_heatmap(data):
         xaxis_title="分类",  # 明确设置 x 轴标题
         yaxis_title="词语",  # 明确设置 y 轴标题
         coloraxis_colorbar_title="词频"  # 设置颜色条标题
-    )
+        )
     st.plotly_chart(fig)
     
 
