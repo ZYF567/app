@@ -72,14 +72,15 @@ def create_wordcloud(words):
     ax.imshow(wordcloud, interpolation="bilinear")
     ax.axis("off")
     st.pyplot(fig)
-
 def create_bar_chart(data):
-    matplotlib.rcParams['font.family'] = 'SimHei'
-    matplotlib.rcParams['font.sans-serif'] = ['SimHei']
-    matplotlib.rcParams['axes.unicode_minus'] = False
     if data is None or data.empty:
         print("没有可绘制的数据。")
         return
+
+    # 设置字体
+    matplotlib.rcParams['font.family'] = 'SimHei'
+    matplotlib.rcParams['font.sans - serif'] = ['SimHei']
+    matplotlib.rcParams['axes.unicode_minus'] = False
 
     # 创建图表
     fig, ax = plt.subplots(figsize=(10, 5))  # 设置图表大小
