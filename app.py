@@ -48,7 +48,7 @@ def create_wordcloud(words):
     # 指定字体文件的路径
     font_path = 'SimHei.ttf'  # 假设字体文件已经上传到应用根目录
     if not os.path.isfile(font_path):
-        st.error("字体文件simhei.ttf不存在，请上传字体文件到应用根目录。")
+        st.error("字体文件SimHei.ttf不存在，请上传字体文件到应用根目录。")
         return
     wordcloud = WordCloud(font_path=font_path, width=800, height=400).generate(' '.join(words))
     ax.imshow(wordcloud, interpolation="bilinear")
