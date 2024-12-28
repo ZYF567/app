@@ -46,7 +46,7 @@ def process_text_for_frequency(text):
 def create_wordcloud(words):
     fig, ax = plt.subplots(figsize=(10, 5))
     # 指定字体文件的路径
-    font_path = 'simhei.ttf'  # 假设字体文件已经上传到应用根目录
+    font_path = 'SimHei.ttf'  # 假设字体文件已经上传到应用根目录
     if not os.path.isfile(font_path):
         st.error("字体文件simhei.ttf不存在，请上传字体文件到应用根目录。")
         return
